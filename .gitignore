@@ -1,1 +1,3 @@
 __pycache__
+dist/
+src/ds_python.egg-info
