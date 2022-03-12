@@ -19,4 +19,4 @@ This is kind of inspired by my understanding of the `Result` of the Rust languag
 
 ## Roadmap
 
-*   \[ ] Allow `Result`s to only catch a specific exception.
+*   \[ ] Allow `Result`s to only catch a specific exception. See Issue #1 for details.
