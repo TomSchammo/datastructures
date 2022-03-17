@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Optional, TypeVar, get_args
+from typing import Any, Callable, Generic, Optional, Type, TypeVar, get_args
 from inspect import getcallargs
 
 from datastructures.exceptions import NoException
@@ -18,6 +18,7 @@ class Result(Generic[V, E]):
 
     __value: Optional[V]
     __error: E
+    __r_type: Optional[Type]
 
     def __init__(self, func: Callable, *args, **kwargs) -> None:
         """
@@ -31,6 +32,9 @@ class Result(Generic[V, E]):
         # NOTE: Making sure that the user has actually provided
         #       the required function arguments.
         getcallargs(func, *args, **kwargs)
+
+        self.__r_type = func.__annotations__[
+            'return'] if 'return' in func.__annotations__.keys() else None
 
         try:
             self.__value = func(*args, **kwargs) if args else func()
@@ -72,18 +76,17 @@ class Result(Generic[V, E]):
         Otherwise this will behave like get_or_any.
         """
 
-        # NOTE: If typehints are provided, the type of `alt` is checked.
-        try:
-            value_type = get_args(self.__orig_class__)[0]
+        # NOTE: Trying to infer the return type if it is not already set
+        if not self.__r_type:
+            try:
+                self.__r_type = get_args(self.__orig_class__)[0]
 
-            if type(alt) is not value_type:
-                raise TypeError
+            except AttributeError:
+                pass
 
-        # NOTE: Else, the function just continues and, in that case,
-        #       acts like `get_or_any`.
-        # TODO check if it's possible to infer return type of function.
-        except AttributeError:
-            pass
+        # NOTE: Type checking if typehints are available
+        if self.__r_type and type(alt) is not self.__r_type:
+            raise TypeError
 
         if type(self.__error) is NoException:
             assert self.__value is not None
