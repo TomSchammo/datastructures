@@ -79,7 +79,7 @@ class Result(Generic[V, E]):
         else:
             return alt
 
-    def get_or_any(self, alt: V) -> Any:
+    def get_or_any(self, alt: Any) -> Any:
         """
         Retrieves the value of the object if the exception
         is of type :class:`NoException` (so there is no exception).
