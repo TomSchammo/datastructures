@@ -214,7 +214,7 @@ def test_methods_raise_optional_args():
         result3.raise_error()
 
 
-def test_typehints():
+def test_result_typehints():
 
     result = Result[int, BaseException](t_raise)
 
@@ -225,3 +225,35 @@ def test_typehints():
         result.get_or("abc")
 
     assert result.get_or_any("abc") == "abc"
+
+
+def test_function_typehints():
+
+    result = Result(t_raise_return, True, True)
+
+    assert result.get() == None
+    assert result.get_or(0) == 0
+    assert result._get_error_type() == NotImplementedError
+
+    with pytest.raises(TypeError):
+        result.get_or("abc")
+
+    assert result.get_or_any("abc") == "abc"
+
+    result2 = Result(t_raise_return_optional, True)
+
+    assert result2.get() == None
+    assert result2.get_or(0) == 0
+    assert result2.get_or("abc") == "abc"
+    assert result2.get_or_any("abc") == "abc"
+    assert result2.get_or_any(0) == 0
+    assert result2._get_error_type() == KeyboardInterrupt
+
+    result3 = Result(t_raise)
+
+    assert result3.get() == None
+    assert result3.get_or(0) == 0
+    assert result3.get_or("abc") == "abc"
+    assert result3.get_or_any("abc") == "abc"
+    assert result3.get_or_any(0) == 0
+    assert result3._get_error_type() == BaseException
