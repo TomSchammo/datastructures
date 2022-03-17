@@ -16,7 +16,7 @@ class Result(Generic[V, E]):
     Keep in mind that any Exception will be catched.
     """
 
-    __value: V
+    __value: Optional[V]
     __error: E
 
     def __init__(self, func: Callable, *args, **kwargs) -> None:
