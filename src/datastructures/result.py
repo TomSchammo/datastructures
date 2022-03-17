@@ -72,7 +72,8 @@ class Result(Generic[V, E]):
         if type(alt) is not type(self.__value):
             raise TypeError
 
-        if self.__error is NoException:
+        if type(self.__error) is NoException:
+            assert self.__value is not None
             return self.__value
 
         else:
@@ -90,7 +91,7 @@ class Result(Generic[V, E]):
         :return: The value stored in the result or alt
         """
 
-        if self.__error is NoException:
+        if type(self.__error) is NoException:
             return self.__value
 
         else:
