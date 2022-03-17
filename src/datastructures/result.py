@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, Optional, TypeVar
+from typing import Any, Callable, Generic, Optional, TypeVar, get_args
 from inspect import getcallargs
 
 from datastructures.exceptions import NoException
@@ -67,10 +67,23 @@ class Result(Generic[V, E]):
 
         :raises: :class:`TypeError` if the type of `alt` is not the
                  same as the return value of the executed function.
+
+        NOTE that a :class:`TypeError` is only raised if typehints are provided.
+        Otherwise this will behave like get_or_any.
         """
 
-        if type(alt) is not type(self.__value):
-            raise TypeError
+        # NOTE: If typehints are provided, the type of `alt` is checked.
+        try:
+            value_type = get_args(self.__orig_class__)[0]
+
+            if type(alt) is not value_type:
+                raise TypeError
+
+        # NOTE: Else, the function just continues and, in that case,
+        #       acts like `get_or_any`.
+        # TODO check if it's possible to infer return type of function.
+        except AttributeError:
+            pass
 
         if type(self.__error) is NoException:
             assert self.__value is not None
