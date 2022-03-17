@@ -1,8 +1,6 @@
 import pytest
 from datastructures.result import Result, NoException
 
-# FIXME: this is a pile of crap
-
 
 def t_return():
     return 1
